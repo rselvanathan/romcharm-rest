@@ -1,5 +1,6 @@
 package com.romcharm.controllerUtils;
 
+import com.romcharm.domain.Error;
 import com.romcharm.exceptions.NotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {NotFoundException.class})
     public ResponseEntity<Object> handleException(RuntimeException e, WebRequest request) {
-        return handleExceptionInternal(e, "The resource was not found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        Error error = Error.builder().error("The resource was not found").build();
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 }

@@ -16,14 +16,26 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Document(collection = "Families")
 public class Family {
+
     @Id
     @NotNull
     @NotBlank
-    private String familyName;
+    private String rsvpName;
+
+    @NotNull
+    @NotBlank
+    private String firstName;
+
+    @NotNull
+    @NotBlank
+    private String lastName;
 
     @NotNull
     private Boolean areAttending;
 
     @NotNull
     private Integer numberAttending;
+
+    @NotNull
+    private Boolean registered;
 }

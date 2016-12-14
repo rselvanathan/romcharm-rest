@@ -20,10 +20,10 @@ public class FamiliesController {
         familiesRespository = respository;
     }
 
-    @RequestMapping(value = "/{familyName}", method = RequestMethod.GET, produces = {"application/json"})
+    @RequestMapping(value = "/{rsvpName}", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
-    public Family getFamily(@PathVariable("familyName") String familyName) {
-        Family family = familiesRespository.findOne(familyName);
+    public Family getFamily(@PathVariable("rsvpName") String rsvpName) {
+        Family family = familiesRespository.findOne(rsvpName);
         if(family == null)
             throw new NotFoundException(APIErrorCode.FAMILY_NAME_NOT_FOUND);
         return family;
@@ -32,6 +32,16 @@ public class FamiliesController {
     @RequestMapping(value = "/family", method = RequestMethod.PUT, consumes = {"application/json"})
     @ResponseStatus(value = HttpStatus.CREATED)
     public void saveFamily(@RequestBody @Valid Family family) {
+        familiesRespository.save(family);
+    }
+
+    /**
+     * TODO MAKE THIS API PRIVATE - E.G Can only be called with a admin Authentication
+     */
+    @RequestMapping(value = "/{rsvpName}", method = RequestMethod.PUT, produces = {"application/json"})
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addRSVPEntry(@PathVariable String rsvpName) {
+        Family family = Family.builder().rsvpName(rsvpName).registered(false).build();
         familiesRespository.save(family);
     }
 }

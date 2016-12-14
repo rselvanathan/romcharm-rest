@@ -28,6 +28,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @IntegrationTest("server.port:10")
 public class FamiliesControllerIT {
 
+    private static final String FIRST_NAME = "firstName";
+
+    private static final String LAST_NAME = "lastName";
+
+    private static final String RSVP_NAME = "rsvpName";
+
     @Value("${local.server.port}")
     private int port;
 
@@ -51,9 +57,12 @@ public class FamiliesControllerIT {
     public void whenFamilyDoesExistThenReturnObject() {
         String foundName = "foundName";
         Family expectedFamily = Family.builder()
-                                      .familyName(foundName)
+                                      .rsvpName(foundName)
+                                      .firstName(FIRST_NAME)
+                                      .lastName(LAST_NAME)
                                       .areAttending(true)
                                       .numberAttending(5)
+                                      .registered(true)
                                       .build();
 
         familiesRespository.save(expectedFamily);
@@ -72,10 +81,20 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyThoseDetailsShouldBeSaved() {
         String familyName = "toBeSaved";
-        Family initialFamily = Family.builder().familyName(familyName).areAttending(false).build();
+        Family initialFamily = Family.builder()
+                                     .rsvpName(familyName)
+                                     .registered(false)
+                                     .build();
         familiesRespository.save(initialFamily);
 
-        Family toSave = Family.builder().familyName(familyName).areAttending(true).numberAttending(4).build();
+        Family toSave = Family.builder()
+                              .rsvpName(familyName)
+                              .firstName(FIRST_NAME)
+                              .lastName(LAST_NAME)
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
 
         given()
             .contentType(ContentType.JSON)
@@ -92,7 +111,13 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithFamilyNameNullShouldReturn400Status() {
-        Family toSave = Family.builder().areAttending(false).numberAttending(5).build();
+        Family toSave = Family.builder()
+                              .firstName(FIRST_NAME)
+                              .lastName(LAST_NAME)
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
 
         given()
             .contentType(ContentType.JSON)
@@ -105,7 +130,14 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithFamilyNameIsEmptyShouldReturn400Status() {
-        Family toSave = Family.builder().familyName("").areAttending(false).numberAttending(5).build();
+        Family toSave = Family.builder()
+                              .rsvpName("")
+                              .firstName(FIRST_NAME)
+                              .lastName(LAST_NAME)
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
 
         given()
             .contentType(ContentType.JSON)
@@ -117,8 +149,73 @@ public class FamiliesControllerIT {
     }
 
     @Test
-    public void whenSavingFamilyWithFamilyNameIsBlankShouldReturn400Status() {
-        Family toSave = Family.builder().familyName(" ").areAttending(false).numberAttending(5).build();
+    public void whenSavingFamilyWithFirstNameIsNullShouldReturn400Status() {
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .lastName(LAST_NAME)
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(toSave)
+            .when()
+            .put("families/family")
+            .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void whenSavingFamilyWithFirstNameIsEmptyShouldReturn400Status() {
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .firstName("")
+                              .lastName(LAST_NAME)
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(toSave)
+            .when()
+            .put("families/family")
+            .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void whenSavingFamilyWithLastNameIsNullShouldReturn400Status() {
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .firstName(FIRST_NAME)
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(toSave)
+            .when()
+            .put("families/family")
+            .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void whenSavingFamilyWithLastNameIsEmptyShouldReturn400Status() {
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .firstName(FIRST_NAME)
+                              .lastName("")
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
 
         given()
             .contentType(ContentType.JSON)
@@ -131,7 +228,13 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithIsAttendingFieldIsNullShouldReturn400Status() {
-        Family toSave = Family.builder().familyName("test").numberAttending(5).build();
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .firstName(FIRST_NAME)
+                              .lastName("")
+                              .numberAttending(4)
+                              .registered(true)
+                              .build();
 
         given()
             .contentType(ContentType.JSON)
@@ -144,7 +247,13 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithIsNumberOfPeopleAttendingFieldIsNullShouldReturn400Status() {
-        Family toSave = Family.builder().familyName("test").areAttending(true).build();
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .firstName(FIRST_NAME)
+                              .lastName("")
+                              .areAttending(true)
+                              .registered(true)
+                              .build();
 
         given()
             .contentType(ContentType.JSON)
@@ -153,5 +262,41 @@ public class FamiliesControllerIT {
             .put("families/family")
         .then()
             .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void whenSavingFamilyWithRegisteredIsNullShouldReturn400Status() {
+        Family toSave = Family.builder()
+                              .rsvpName(RSVP_NAME)
+                              .firstName(FIRST_NAME)
+                              .lastName("")
+                              .areAttending(true)
+                              .numberAttending(4)
+                              .build();
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(toSave)
+        .when()
+            .put("families/family")
+        .then()
+            .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    public void whenSavingRSVPNameOnlyItShouldSucceed() {
+        String rsvpName = "testSavingRsvp";
+
+        given()
+            .contentType(ContentType.JSON)
+        .when()
+            .put("families/"+rsvpName)
+        .then()
+            .statusCode(HttpStatus.CREATED.value());
+
+        Family expectedFamily = Family.builder().rsvpName(rsvpName).registered(false).build();
+        Family result = familiesRespository.findOne(rsvpName);
+
+        assertThat(result, is(expectedFamily));
     }
 }

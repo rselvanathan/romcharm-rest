@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(
+        maxAge = 9000,
+        allowedHeaders = "*",
+        methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS})
 @RequestMapping("/families")
 public class FamiliesController {
     private final FamiliesRespository familiesRespository;

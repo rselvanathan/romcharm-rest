@@ -12,9 +12,8 @@ import javax.validation.Valid;
 
 @RestController
 @CrossOrigin(
-        maxAge = 9000,
         allowedHeaders = "*",
-        methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS})
+        methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.OPTIONS, RequestMethod.GET})
 @RequestMapping("/families")
 public class FamiliesController {
     private final FamiliesRespository familiesRespository;

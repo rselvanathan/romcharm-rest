@@ -62,7 +62,6 @@ public class FamiliesControllerIT {
                                       .lastName(LAST_NAME)
                                       .areAttending(true)
                                       .numberAttending(5)
-                                      .registered(true)
                                       .build();
 
         familiesRespository.save(expectedFamily);
@@ -83,7 +82,6 @@ public class FamiliesControllerIT {
         String email = "toBeSaved";
         Family initialFamily = Family.builder()
                                      .email(email)
-                                     .registered(false)
                                      .build();
         familiesRespository.save(initialFamily);
 
@@ -93,7 +91,6 @@ public class FamiliesControllerIT {
                               .lastName(LAST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -116,7 +113,6 @@ public class FamiliesControllerIT {
                               .lastName(LAST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -136,7 +132,6 @@ public class FamiliesControllerIT {
                               .lastName(LAST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -155,7 +150,6 @@ public class FamiliesControllerIT {
                               .lastName(LAST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -175,7 +169,6 @@ public class FamiliesControllerIT {
                               .lastName(LAST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -194,7 +187,6 @@ public class FamiliesControllerIT {
                               .firstName(FIRST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -214,7 +206,6 @@ public class FamiliesControllerIT {
                               .lastName("")
                               .areAttending(true)
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -233,7 +224,6 @@ public class FamiliesControllerIT {
                               .firstName(FIRST_NAME)
                               .lastName("")
                               .numberAttending(4)
-                              .registered(true)
                               .build();
 
         given()
@@ -252,26 +242,6 @@ public class FamiliesControllerIT {
                               .firstName(FIRST_NAME)
                               .lastName("")
                               .areAttending(true)
-                              .registered(true)
-                              .build();
-
-        given()
-            .contentType(ContentType.JSON)
-            .body(toSave)
-        .when()
-            .put("families/family")
-        .then()
-            .statusCode(HttpStatus.BAD_REQUEST.value());
-    }
-
-    @Test
-    public void whenSavingFamilyWithRegisteredIsNullShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName(FIRST_NAME)
-                              .lastName("")
-                              .areAttending(true)
-                              .numberAttending(4)
                               .build();
 
         given()

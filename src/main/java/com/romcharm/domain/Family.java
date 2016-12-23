@@ -35,7 +35,4 @@ public class Family {
 
     @NotNull
     private Integer numberAttending;
-
-    @NotNull
-    private Boolean registered;
 }

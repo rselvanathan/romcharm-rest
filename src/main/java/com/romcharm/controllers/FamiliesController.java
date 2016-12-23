@@ -23,7 +23,7 @@ public class FamiliesController {
         familiesRespository = respository;
     }
 
-    @RequestMapping(value = "/{email}", method = RequestMethod.GET, produces = {"application/json"})
+    @RequestMapping(value = "/{email:.+}", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
     public Family getFamily(@PathVariable("email") String email) {
         Family family = familiesRespository.findOne(email);

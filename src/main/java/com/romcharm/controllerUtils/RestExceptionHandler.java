@@ -14,8 +14,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {NotFoundException.class})
-    public ResponseEntity<Object> handleException(RuntimeException e, WebRequest request) {
+    public ResponseEntity<Object> handleNotFoundException(RuntimeException e, WebRequest request) {
         Error error = Error.builder().error("The resource was not found").build();
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public ResponseEntity<Object> handleIllegalArgumentException(RuntimeException e, WebRequest request) {
+        Error error = Error.builder().error("The arguments were incorrect : " + e.getMessage()).build();
+        return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

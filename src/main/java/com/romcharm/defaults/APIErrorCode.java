@@ -4,5 +4,6 @@ package com.romcharm.defaults;
  * TODO add comment
  */
 public enum APIErrorCode {
-    FAMILY_NAME_NOT_FOUND;
+    EMAIL_NOT_FOUND,
+    USER_NOT_FOUND
 }

@@ -4,7 +4,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.romcharm.Application;
 import com.romcharm.domain.Family;
-import com.romcharm.repositories.FamiliesRespository;
+import com.romcharm.repositories.FamiliesRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +32,13 @@ public class FamiliesControllerIT {
 
     private static final String LAST_NAME = "lastName";
 
-    private static final String RSVP_NAME = "rsvpName";
+    private static final String EMAIL = "email@email.com";
 
     @Value("${local.server.port}")
     private int port;
 
     @Autowired
-    private FamiliesRespository familiesRespository;
+    private FamiliesRepository familiesRespository;
 
     @Before
     public void setup() {
@@ -57,7 +57,7 @@ public class FamiliesControllerIT {
     public void whenFamilyDoesExistThenReturnObject() {
         String foundName = "foundName";
         Family expectedFamily = Family.builder()
-                                      .rsvpName(foundName)
+                                      .email(foundName)
                                       .firstName(FIRST_NAME)
                                       .lastName(LAST_NAME)
                                       .areAttending(true)
@@ -80,15 +80,15 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyThoseDetailsShouldBeSaved() {
-        String familyName = "toBeSaved";
+        String email = "toBeSaved";
         Family initialFamily = Family.builder()
-                                     .rsvpName(familyName)
+                                     .email(email)
                                      .registered(false)
                                      .build();
         familiesRespository.save(initialFamily);
 
         Family toSave = Family.builder()
-                              .rsvpName(familyName)
+                              .email(email)
                               .firstName(FIRST_NAME)
                               .lastName(LAST_NAME)
                               .areAttending(true)
@@ -104,7 +104,7 @@ public class FamiliesControllerIT {
         .then()
             .statusCode(HttpStatus.CREATED.value());
 
-        Family result = familiesRespository.findOne(familyName);
+        Family result = familiesRespository.findOne(email);
 
         assertThat(result, is(toSave));
     }
@@ -131,7 +131,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithFamilyNameIsEmptyShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName("")
+                              .email("")
                               .firstName(FIRST_NAME)
                               .lastName(LAST_NAME)
                               .areAttending(true)
@@ -151,7 +151,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithFirstNameIsNullShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .lastName(LAST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
@@ -170,7 +170,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithFirstNameIsEmptyShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .firstName("")
                               .lastName(LAST_NAME)
                               .areAttending(true)
@@ -190,7 +190,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithLastNameIsNullShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .firstName(FIRST_NAME)
                               .areAttending(true)
                               .numberAttending(4)
@@ -209,7 +209,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithLastNameIsEmptyShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .firstName(FIRST_NAME)
                               .lastName("")
                               .areAttending(true)
@@ -229,7 +229,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithIsAttendingFieldIsNullShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .firstName(FIRST_NAME)
                               .lastName("")
                               .numberAttending(4)
@@ -248,7 +248,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithIsNumberOfPeopleAttendingFieldIsNullShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .firstName(FIRST_NAME)
                               .lastName("")
                               .areAttending(true)
@@ -267,7 +267,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenSavingFamilyWithRegisteredIsNullShouldReturn400Status() {
         Family toSave = Family.builder()
-                              .rsvpName(RSVP_NAME)
+                              .email(EMAIL)
                               .firstName(FIRST_NAME)
                               .lastName("")
                               .areAttending(true)
@@ -281,22 +281,5 @@ public class FamiliesControllerIT {
             .put("families/family")
         .then()
             .statusCode(HttpStatus.BAD_REQUEST.value());
-    }
-
-    @Test
-    public void whenSavingRSVPNameOnlyItShouldSucceed() {
-        String rsvpName = "testSavingRsvp";
-
-        given()
-            .contentType(ContentType.JSON)
-        .when()
-            .put("families/"+rsvpName)
-        .then()
-            .statusCode(HttpStatus.CREATED.value());
-
-        Family expectedFamily = Family.builder().rsvpName(rsvpName).registered(false).build();
-        Family result = familiesRespository.findOne(rsvpName);
-
-        assertThat(result, is(expectedFamily));
     }
 }

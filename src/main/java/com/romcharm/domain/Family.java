@@ -20,7 +20,7 @@ public class Family {
     @Id
     @NotNull
     @NotBlank
-    private String rsvpName;
+    private String email;
 
     @NotNull
     @NotBlank

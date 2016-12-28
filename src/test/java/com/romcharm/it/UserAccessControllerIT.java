@@ -2,6 +2,7 @@ package com.romcharm.it;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
+import com.romcharm.config.MongoConfig;
 import com.romcharm.defaults.Role;
 import com.romcharm.domain.UserRole;
 import com.romcharm.repositories.UserAccessRepository;
@@ -10,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
@@ -22,6 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EnableAutoConfiguration(exclude = MongoConfig.class)
 @TestPropertySource(value = "classpath:config.properties")
 public class UserAccessControllerIT {
 

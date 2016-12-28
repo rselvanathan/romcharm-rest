@@ -1,0 +1,17 @@
+notifications:
+  email:
+    recipients:
+     - romesh69@hotmail.com
+
+    on_success: never
+    on_failure: change
+
+language: java
+sudo: false
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+script: mvn clean install
+
+

@@ -1,6 +1,6 @@
-FROM frolvlad/alpine-oraclejdk8:slim
+FROM develar/java
 VOLUME /tmp
-ADD target/romcharm-backend-1.0.0-SNAPSHOT.jar app.jar
+ADD target/romcharm-rest-1.0.0-SNAPSHOT.jar app.jar
 EXPOSE 8080
 RUN sh -c 'touch /app.jar'
 ENV JAVA_OPTS=""

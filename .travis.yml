@@ -7,13 +7,19 @@ notifications:
     on_failure: change
 
 language: java
-sudo: false
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+sudo: required
+services:
+  - docker
+
+# Build the Java app
 jdk:
   - oraclejdk8
-script: mvn clean install
+script: mvn clean install -U
+
+#Build the Docker image and push to registry
+after_success:
+  - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
+  - docker build -t rselvanathan/romcharm-rest:latest .
+  - docker push rselvanathan/romcharm-rest
 
 

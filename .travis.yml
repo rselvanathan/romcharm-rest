@@ -6,6 +6,11 @@ notifications:
     on_success: never
     on_failure: change
 
+# safelist
+branches:
+  only:
+  - master
+
 language: java
 sudo: required
 services:
@@ -14,7 +19,7 @@ services:
 # Build the Java app
 jdk:
   - oraclejdk8
-script: mvn clean install -U
+script: mvn clean install
 
 #Build the Docker image and push to registry
 after_success:

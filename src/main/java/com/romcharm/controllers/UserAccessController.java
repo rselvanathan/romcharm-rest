@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(
+        origins = {"www.romandcharmi.com", "romandcharmi.com"}, allowedHeaders = "*",
+        methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("/users")
 public class UserAccessController {
     private final UserAccessRepository userAccessRepository;

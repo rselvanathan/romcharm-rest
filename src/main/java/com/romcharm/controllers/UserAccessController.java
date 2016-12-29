@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @RestController
 @CrossOrigin(
-        origins = {"www.romandcharmi.com", "romandcharmi.com"}, allowedHeaders = "*",
+        origins = {"http://www.romandcharmi.com", "http://romandcharmi.com"}, allowedHeaders = "*",
         methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("/users")
 public class UserAccessController {

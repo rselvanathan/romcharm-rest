@@ -1,14 +1,14 @@
 package com.romcharm.repositories;
 
-import com.romcharm.domain.UserRole;
+import com.romcharm.domain.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserAccessRepository extends MongoRepository<UserRole, String>{
+public interface UserRepository extends MongoRepository<User, String>{
     @Override
-    UserRole findOne(String username);
+    User findOne(String username);
 
     @Override
-    UserRole save(UserRole userRole);
+    User save(User userRole);
 }

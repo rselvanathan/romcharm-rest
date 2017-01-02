@@ -6,6 +6,7 @@ public class APIException extends RuntimeException {
     private APIErrorCode apiErrorCode;
 
     APIException(APIErrorCode apiErrorCode) {
+        super(apiErrorCode.getReason());
         this.apiErrorCode = apiErrorCode;
     }
 

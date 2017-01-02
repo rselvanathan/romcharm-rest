@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(
-        origins = {"http://www.romandcharmi.com", "http://romandcharmi.com"}, allowedHeaders = "*",
-        methods = {RequestMethod.DELETE, RequestMethod.PUT, RequestMethod.GET, RequestMethod.POST})
 @RequestMapping("/families")
 public class FamiliesController {
     private final FamiliesRepository familiesRespository;
@@ -32,9 +29,14 @@ public class FamiliesController {
         return family;
     }
 
-    @RequestMapping(value = "/family", method = RequestMethod.PUT, consumes = {"application/json"})
+    @RequestMapping(value = "/family", method = RequestMethod.POST, consumes = {"application/json"})
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void saveFamily(@RequestBody @Valid Family family) {
-        familiesRespository.save(family);
+    public Family saveFamily(@RequestBody @Valid Family family) {
+        Family familyResult = familiesRespository.findOne(family.getEmail());
+        if(familyResult == null) {
+            return familiesRespository.save(family);
+        } else {
+            throw new IllegalArgumentException(APIErrorCode.FAMILY_EXISTS.getReason());
+        }
     }
 }

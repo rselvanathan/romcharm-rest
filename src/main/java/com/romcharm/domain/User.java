@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import javax.validation.constraints.NotNull;
 
 @Data
@@ -14,12 +15,16 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Document(collection = "UserRoles")
-public class UserRole {
+public class User {
 
     @Id
     @NotNull
     @NotEmpty
-    private String userAccessName;
+    private String username;
+
+    @NotNull
+    @NotEmpty
+    private String password;
 
     @NotNull
     @NotEmpty

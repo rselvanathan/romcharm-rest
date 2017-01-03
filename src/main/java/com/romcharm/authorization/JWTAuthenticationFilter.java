@@ -19,7 +19,7 @@ import java.util.Optional;
 
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
     private final JWTUtil jwtUtil;
 
@@ -32,14 +32,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader("authorization");
         Optional<String> tokenUsername = jwtUtil.getTokenUsername(token);
         if(!tokenUsername.isPresent()) {
-            logger.info("Invalid Token");
+            log.info("Invalid Token");
         } else {
             Optional<String> tokenRole = jwtUtil.getTokenRole(token);
             User user = User.builder().username(tokenUsername.get()).role(tokenRole.get()).build();
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(user, null, Collections.singletonList(new SimpleGrantedAuthority(user.getRole())));
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            logger.info(String.format("User %s has been authenticated with the role %s", user.getUsername(), user.getRole()));
+            log.info(String.format("User %s has been authenticated with the role %s", user.getUsername(), user.getRole()));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
         filterChain.doFilter(request, response);

@@ -1,0 +1,17 @@
+machine:
+  java:
+    version: oraclejdk8
+
+  services:
+    - docker
+
+general:
+  branches:
+    only:
+      - master
+
+
+test:
+ override:
+  - mvn clean install
+

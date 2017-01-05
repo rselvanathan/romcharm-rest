@@ -26,5 +26,8 @@ after_success:
   - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
   - docker build -t rselvanathan/romcharm-rest:latest .
   - docker push rselvanathan/romcharm-rest
+  # Deploy to instance
+  - openssl aes-256-cbc -K "$ENCRYPT_K" -iv "$ENCRYPT_IV" -in "./deploy_key.enc" -out "./deploy_key" -d
+  - chmod 600 ./deploy_key && ssh -o StrictHostKeyChecking=no -i ./deploy_key $SSH_USER@$SSH_IP './deploy-romcharm-rest.sh'
 
 

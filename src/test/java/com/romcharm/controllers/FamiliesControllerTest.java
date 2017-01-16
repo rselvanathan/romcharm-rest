@@ -1,7 +1,10 @@
 package com.romcharm.controllers;
 
+import com.amazonaws.services.sns.model.PublishResult;
 import com.romcharm.domain.Family;
 import com.romcharm.exceptions.NotFoundException;
+import com.romcharm.notification.NotificationService;
+import com.romcharm.notification.domain.EmailMessage;
 import com.romcharm.repositories.FamiliesRepository;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,13 +12,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.concurrent.CompletableFuture;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FamiliesControllerTest {
@@ -27,6 +31,9 @@ public class FamiliesControllerTest {
 
     @Mock
     private FamiliesRepository familiesRepositoryMock;
+
+    @Mock
+    private NotificationService notificationServiceMock;
 
     @InjectMocks
     private FamiliesController familiesController;
@@ -55,9 +62,17 @@ public class FamiliesControllerTest {
     public void whenAddingFamilyAndFamilyIsNewThenAddFamily() {
         when(familiesRepositoryMock.findOne(email)).thenReturn(null);
 
-        Family family = Family.builder().email(email).build();
+        Family family = new Family(email, "firstName", "lastName", true, 2);
+        EmailMessage emailMessage = new EmailMessage(email, "firstName", "lastName", true, 2);
+        CompletableFuture<PublishResult> completableFuture = new CompletableFuture<>();
+        completableFuture.complete(Mockito.mock(PublishResult.class));
+
+        when(familiesRepositoryMock.save(family)).thenReturn(family);
+        when(notificationServiceMock.sendEmailNotificiation(emailMessage)).thenReturn(completableFuture);
+
         familiesController.saveFamily(family);
 
+        verify(notificationServiceMock).sendEmailNotificiation(emailMessage);
         verify(familiesRepositoryMock).save(family);
     }
 

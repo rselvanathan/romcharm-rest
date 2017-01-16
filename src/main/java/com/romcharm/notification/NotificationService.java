@@ -18,7 +18,7 @@ public class NotificationService {
     private final AmazonSNSAsyncClient amazonSNSAsyncClient;
     private final JSONMapper jsonMapper;
 
-    @Value("$AWS.EMAIL.SNS-TOPIC")
+    @Value("${AWS_EMAIL_SNS_TOPIC}")
     private String emailSNSTopic;
 
     @Autowired

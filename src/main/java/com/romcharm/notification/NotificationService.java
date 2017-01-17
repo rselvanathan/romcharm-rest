@@ -2,6 +2,7 @@ package com.romcharm.notification;
 
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.sns.AmazonSNSAsyncClient;
+import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import com.romcharm.notification.domain.EmailMessage;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 @Component
@@ -21,6 +23,9 @@ public class NotificationService {
     @Value("${AWS_EMAIL_SNS_TOPIC}")
     private String emailSNSTopic;
 
+    @Value("${APP_TYPE}")
+    private String appType;
+
     @Autowired
     public NotificationService(AmazonSNSAsyncClient client, JSONMapper mapper) {
         amazonSNSAsyncClient = client;
@@ -30,7 +35,15 @@ public class NotificationService {
     public CompletableFuture<PublishResult> sendEmailNotificiation(EmailMessage emailMessage) {
         CompletableFuture<PublishResult> future = new CompletableFuture<>();
         String emailMessageJson = jsonMapper.getJSONStringFromObject(emailMessage);
-        amazonSNSAsyncClient.publishAsync(emailSNSTopic, emailMessageJson, getAsyncHandler(future));
+        PublishRequest request = new PublishRequest(emailSNSTopic, emailMessageJson);
+
+        HashMap<String, MessageAttributeValue> attributes = new HashMap<>();
+        MessageAttributeValue value = new MessageAttributeValue();
+        value.setStringValue(appType);
+        attributes.put("apptype", value);
+        request.setMessageAttributes(attributes);
+
+        amazonSNSAsyncClient.publishAsync(request, getAsyncHandler(future));
         return future;
     }
 

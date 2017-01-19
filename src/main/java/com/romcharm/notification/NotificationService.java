@@ -38,9 +38,7 @@ public class NotificationService {
         PublishRequest request = new PublishRequest(emailSNSTopic, emailMessageJson);
 
         HashMap<String, MessageAttributeValue> attributes = new HashMap<>();
-        MessageAttributeValue value = new MessageAttributeValue();
-        value.setStringValue(appType);
-        attributes.put("apptype", value);
+        attributes.put("apptype", new MessageAttributeValue().withDataType("String").withStringValue(appType));
         request.setMessageAttributes(attributes);
 
         amazonSNSAsyncClient.publishAsync(request, getAsyncHandler(future));

@@ -2,6 +2,8 @@ package com.romcharm.notification;
 
 import com.amazonaws.handlers.AsyncHandler;
 import com.amazonaws.services.sns.AmazonSNSAsyncClient;
+import com.amazonaws.services.sns.model.MessageAttributeValue;
+import com.amazonaws.services.sns.model.PublishRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.romcharm.notification.domain.EmailMessage;
@@ -14,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.HashMap;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -23,6 +27,7 @@ import static org.mockito.Mockito.when;
 public class NotificationServiceTest {
 
     private final static String SNS_TOPIC = "topic";
+    private final static String APP_TYPE = "rom";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,6 +43,7 @@ public class NotificationServiceTest {
     @Before
     public void setup() {
         ReflectionTestUtils.setField(notificationService, "emailSNSTopic", SNS_TOPIC);
+        ReflectionTestUtils.setField(notificationService, "appType", APP_TYPE);
     }
 
     @Test
@@ -45,9 +51,14 @@ public class NotificationServiceTest {
         EmailMessage message = new EmailMessage("email", "firstname", "lastname", true, 5);
         String expected = objectMapper.writeValueAsString(message);
 
+        PublishRequest request = new PublishRequest(SNS_TOPIC, expected);
+        HashMap<String, MessageAttributeValue> attributes = new HashMap<>();
+        attributes.put("apptype", new MessageAttributeValue().withDataType("String").withStringValue(APP_TYPE));
+        request.setMessageAttributes(attributes);
+
         when(jsonMapperMock.getJSONStringFromObject(message)).thenReturn(expected);
         notificationService.sendEmailNotificiation(message);
 
-        verify(amazonSNSAsyncClientMock).publishAsync(eq(SNS_TOPIC), eq(expected), any(AsyncHandler.class));
+        verify(amazonSNSAsyncClientMock).publishAsync(eq(request), any(AsyncHandler.class));
     }
 }

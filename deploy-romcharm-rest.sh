@@ -12,4 +12,13 @@ else
 	echo "Removing Dangling Images"
  	docker images -q --filter "dangling=true" | xargs docker rmi
 fi
-docker run -d -e VIRTUAL_HOST=api.romandcharmi.com  --name romcharm-rest --link mongoDB:mongodb -e MONGODB_DBNAME={} -e MONGODB_USERNAME={} -e MONGODB_PASSWORD={} -e jwtSecret={} -it rselvanathan/romcharm-rest:latest
+docker run -d -e VIRTUAL_HOST=api.romandcharmi.com  --name romcharm-rest --link mongoDB:mongodb \
+-e MONGODB_DBNAME= \
+-e MONGODB_USERNAME= \
+-e MONGODB_PASSWORD= \
+-e jwtSecret= \
+-e AWS_ACCESS_KEY_ID= \
+-e AWS_SECRET_ACCESS_KEY= \
+-e AWS_EMAIL_SNS_TOPIC= \
+-e APP_TYPE=ROMCHARM \
+-it rselvanathan/romcharm-rest:latest

@@ -8,7 +8,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,8 +19,8 @@ public class CorsFilterConfig implements Filter {
     private final List<String> accessAllowOrigins;
 
     public CorsFilterConfig() {
-        this.accessAllowOrigins = Stream.of("http://www.romandcharmi.com",
-                                            "http://romandcharmi.com")
+        this.accessAllowOrigins = Stream.of("https://www.romandcharmi.com",
+                                            "https://romandcharmi.com")
                                         .collect(Collectors.toList());
     }
 

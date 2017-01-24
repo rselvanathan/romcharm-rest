@@ -32,7 +32,7 @@ public class NotificationService {
         jsonMapper = mapper;
     }
 
-    public CompletableFuture<PublishResult> sendEmailNotificiation(EmailMessage emailMessage) {
+    public CompletableFuture<PublishResult> sendEmailNotification(EmailMessage emailMessage) {
         CompletableFuture<PublishResult> future = new CompletableFuture<>();
         String emailMessageJson = jsonMapper.getJSONStringFromObject(emailMessage);
         PublishRequest request = new PublishRequest(emailSNSTopic, emailMessageJson);

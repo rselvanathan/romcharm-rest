@@ -1,33 +1,39 @@
 package com.romcharm.controllers;
 
+import com.amazonaws.services.sns.model.PublishResult;
 import com.romcharm.defaults.APIErrorCode;
 import com.romcharm.domain.Family;
 import com.romcharm.exceptions.NotFoundException;
 import com.romcharm.notification.NotificationService;
 import com.romcharm.notification.domain.EmailMessage;
 import com.romcharm.repositories.FamiliesRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/families")
 public class FamiliesController {
-    private final FamiliesRepository familiesRespository;
+    private Logger logger = LoggerFactory.getLogger(FamiliesController.class);
+
+    private final FamiliesRepository familiesRepository;
     private final NotificationService notificationService;
 
     @Autowired
     public FamiliesController(FamiliesRepository repository, NotificationService service) {
-        familiesRespository = repository;
+        familiesRepository = repository;
         notificationService = service;
     }
 
     @RequestMapping(value = "/{email:.+}", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
     public Family getFamily(@PathVariable("email") String email) {
-        Family family = familiesRespository.findOne(email);
+        Family family = familiesRepository.findOne(email);
         if(family == null)
             throw new NotFoundException(APIErrorCode.EMAIL_NOT_FOUND);
         return family;
@@ -36,12 +42,16 @@ public class FamiliesController {
     @RequestMapping(value = "/family", method = RequestMethod.POST, consumes = {"application/json"})
     @ResponseStatus(value = HttpStatus.CREATED)
     public Family saveFamily(@RequestBody @Valid Family family) {
-        Family familyResult = familiesRespository.findOne(family.getEmail());
+        Family familyResult = familiesRepository.findOne(family.getEmail());
         if(familyResult == null) {
-            Family savedFamily = familiesRespository.save(family);
+            Family savedFamily = familiesRepository.save(family);
             EmailMessage message = getEmailMessage(savedFamily);
             // Blocking call currently
-            notificationService.sendEmailNotificiation(message).join();
+            CompletableFuture<PublishResult> future = notificationService.sendEmailNotification(message);
+            future.exceptionally(th -> {
+                logger.error("An error occured when trying to send an E-mail Notification", th);
+                return null;
+            }).join();
             return savedFamily;
         } else {
             throw new IllegalArgumentException(APIErrorCode.FAMILY_EXISTS.getReason());

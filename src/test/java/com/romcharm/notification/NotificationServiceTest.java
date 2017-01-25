@@ -57,7 +57,7 @@ public class NotificationServiceTest {
         request.setMessageAttributes(attributes);
 
         when(jsonMapperMock.getJSONStringFromObject(message)).thenReturn(expected);
-        notificationService.sendEmailNotificiation(message);
+        notificationService.sendEmailNotification(message);
 
         verify(amazonSNSAsyncClientMock).publishAsync(eq(request), any(AsyncHandler.class));
     }

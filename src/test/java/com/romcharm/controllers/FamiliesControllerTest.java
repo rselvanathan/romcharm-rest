@@ -68,12 +68,32 @@ public class FamiliesControllerTest {
         completableFuture.complete(Mockito.mock(PublishResult.class));
 
         when(familiesRepositoryMock.save(family)).thenReturn(family);
-        when(notificationServiceMock.sendEmailNotificiation(emailMessage)).thenReturn(completableFuture);
+        when(notificationServiceMock.sendEmailNotification(emailMessage)).thenReturn(completableFuture);
 
         familiesController.saveFamily(family);
 
-        verify(notificationServiceMock).sendEmailNotificiation(emailMessage);
+        verify(notificationServiceMock).sendEmailNotification(emailMessage);
         verify(familiesRepositoryMock).save(family);
+    }
+
+    @Test
+    public void whenNotificationServiceFutureThrowsAnExceptionExpectAValueToBeStillReturned() {
+        when(familiesRepositoryMock.findOne(email)).thenReturn(null);
+
+        Family family = new Family(email, "firstName", "lastName", true, 2);
+        EmailMessage emailMessage = new EmailMessage(email, "firstName", "lastName", true, 2);
+        CompletableFuture<PublishResult> completableFuture = new CompletableFuture<>();
+        completableFuture.completeExceptionally(new RuntimeException("Fake Error"));
+
+        when(familiesRepositoryMock.save(family)).thenReturn(family);
+        when(notificationServiceMock.sendEmailNotification(emailMessage)).thenReturn(completableFuture);
+
+        Family result = familiesController.saveFamily(family);
+
+        verify(notificationServiceMock).sendEmailNotification(emailMessage);
+        verify(familiesRepositoryMock).save(family);
+
+        assertThat(result, is(family));
     }
 
     @Test

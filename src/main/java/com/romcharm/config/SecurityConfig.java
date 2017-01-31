@@ -33,6 +33,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity webSecurity) {
         // Ignore Security filters on these
         webSecurity.ignoring().antMatchers("/users/auth")
+                                // Ignore Swagger related stuff
+                              .antMatchers("/v2/api-docs",
+                                      "/configuration/ui",
+                                      "/swagger-resources",
+                                      "/configuration/security",
+                                      "/swagger-ui.html",
+                                      "/webjars/**")
                               .antMatchers(HttpMethod.OPTIONS, "/**");
     }
 

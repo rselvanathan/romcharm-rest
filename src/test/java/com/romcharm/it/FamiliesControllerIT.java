@@ -1,21 +1,21 @@
 package com.romcharm.it;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Header;
 import com.romcharm.authorization.JWTUtil;
-import com.romcharm.config.MongoConfig;
 import com.romcharm.defaults.Role;
 import com.romcharm.domain.Family;
 import com.romcharm.domain.User;
-import com.romcharm.repositories.FamiliesRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
@@ -28,7 +28,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @Profile("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableAutoConfiguration(exclude = MongoConfig.class)
 @TestPropertySource(value = "classpath:config.properties")
 public class FamiliesControllerIT {
 
@@ -41,8 +40,8 @@ public class FamiliesControllerIT {
     @Value("${local.server.port}")
     private int port;
 
-    @Autowired
-    private FamiliesRepository familiesRespository;
+    @MockBean
+    private DynamoDBMapper dynamoDBMapper;
 
     @Autowired
     private JWTUtil jwtUtil;
@@ -54,6 +53,8 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenFamilyDoesNotExistThenReturn404() {
+        Mockito.when(dynamoDBMapper.load(Family.class, EMAIL)).thenReturn(null);
+
         given()
             .header(new Header("Authorization", getToken()))
         .when()
@@ -73,7 +74,7 @@ public class FamiliesControllerIT {
                                       .numberAttending(5)
                                       .build();
 
-        familiesRespository.save(expectedFamily);
+        Mockito.when(dynamoDBMapper.load(Family.class, foundName)).thenReturn(expectedFamily);
 
         Family result =
             given()
@@ -93,7 +94,8 @@ public class FamiliesControllerIT {
         Family initialFamily = Family.builder()
                                      .email(email)
                                      .build();
-        familiesRespository.save(initialFamily);
+
+        Mockito.when(dynamoDBMapper.load(Family.class, initialFamily)).thenReturn(initialFamily);
 
         Family toSave = Family.builder()
                               .email(email)

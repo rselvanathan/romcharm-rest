@@ -1,12 +1,13 @@
 package com.romcharm.domain;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 
@@ -14,19 +15,21 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "UserRoles")
+@DynamoDBTable(tableName = "romcharm-userRoles")
 public class User {
 
-    @Id
     @NotNull
     @NotEmpty
+    @DynamoDBHashKey(attributeName = "username")
     private String username;
 
     @NotNull
     @NotEmpty
+    @DynamoDBAttribute(attributeName = "password")
     private String password;
 
     @NotNull
     @NotEmpty
+    @DynamoDBAttribute(attributeName = "role")
     private String role;
 }

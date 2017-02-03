@@ -1,14 +1,26 @@
 package com.romcharm.repositories;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.romcharm.domain.Family;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Repository
-public interface FamiliesRepository extends MongoRepository<Family, String> {
-    @Override
-    Family findOne(String familyName);
+@Component
+public class FamiliesRepository {
 
-    @Override
-    Family save(Family family);
+    private final DynamoDBMapper dynamoDBMapper;
+
+    @Autowired
+    public FamiliesRepository(DynamoDBMapper mapper) {
+        dynamoDBMapper = mapper;
+    }
+
+    public Family findOne(String email) {
+        return dynamoDBMapper.load(Family.class, email);
+    }
+
+    public Family save(Family family) {
+        dynamoDBMapper.save(family);
+        return family;
+    }
 }

@@ -1,10 +1,10 @@
 package com.romcharm.it;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Header;
 import com.romcharm.authorization.JWTUtil;
-import com.romcharm.config.MongoConfig;
 import com.romcharm.defaults.Role;
 import com.romcharm.domain.Login;
 import com.romcharm.domain.Token;
@@ -13,29 +13,32 @@ import com.romcharm.repositories.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 @Profile("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@EnableAutoConfiguration(exclude = MongoConfig.class)
 @TestPropertySource(value = "classpath:config.properties")
 public class UserAccessControllerIT {
 
     @Value("${local.server.port}")
     private int port;
+
+    @MockBean
+    private DynamoDBMapper dynamoDBMapper;
 
     @Autowired
     private JWTUtil jwtUtil;
@@ -130,7 +133,8 @@ public class UserAccessControllerIT {
 
     @Test
     public void whenSavingUserNameThoseDetailsShouldBeSavedIfAuthorizationIsOfRoleAdmin() {
-        String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
+        String usernameAdmin = "admin";
+        String adminToken = addAndRetireveUserToken(usernameAdmin, usernameAdmin, Role.ROLE_ADMIN);
 
         String newUsername = "newUser";
         User newUser = new User(newUsername, "newPass", Role.ROLE_CLIENT_APP.getName());
@@ -144,9 +148,7 @@ public class UserAccessControllerIT {
         .then()
                 .statusCode(HttpStatus.CREATED.value());
 
-        User result = userRepository.findOne(newUsername);
-
-        assertThat(result, is(newUser));
+        Mockito.verify(dynamoDBMapper).save(newUser);
     }
 
     @Test
@@ -221,7 +223,7 @@ public class UserAccessControllerIT {
         String username = "repeatName";
         User user = new User(username, "repeat", Role.ROLE_CLIENT_APP.getName());
 
-        userRepository.save(user);
+        Mockito.when(dynamoDBMapper.load(User.class, username)).thenReturn(user);
 
         given()
                 .contentType(ContentType.JSON)
@@ -235,7 +237,7 @@ public class UserAccessControllerIT {
 
     private String addAndRetireveUserToken(String username, String password, Role role) {
         User user = new User(username, password, role.getName());
-        userRepository.save(user);
+        Mockito.when(dynamoDBMapper.load(User.class, username)).thenReturn(user);
         return jwtUtil.generateToken(user);
     }
 }

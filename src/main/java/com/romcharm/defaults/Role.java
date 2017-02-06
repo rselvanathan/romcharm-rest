@@ -1,7 +1,8 @@
 package com.romcharm.defaults;
 
 public enum Role {
-    ROLE_CLIENT_APP("ROLE_CLIENT_APP"),
+    ROLE_ROMCHARM_APP("ROLE_ROMCHARM_APP"),
+    ROLE_MYPAGE_APP("ROLE_MYPAGE_APP"),
     ROLE_ADMIN("ROLE_ADMIN");
 
     private String name;

@@ -5,7 +5,8 @@ public enum APIErrorCode {
     FAMILY_EXISTS("The Family has already been added associated with the username provided"),
     USER_NOT_FOUND("User was not found"),
     PASSWORD_INCORRECT("Password is incorrect"),
-    USER_EXISTS("User already exists");
+    USER_EXISTS("User already exists"),
+    PROJECT_NOT_FOUND("Project was not found");
 
     private String reason;
 

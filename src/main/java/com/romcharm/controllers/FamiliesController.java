@@ -2,7 +2,7 @@ package com.romcharm.controllers;
 
 import com.amazonaws.services.sns.model.PublishResult;
 import com.romcharm.defaults.APIErrorCode;
-import com.romcharm.domain.Family;
+import com.romcharm.domain.romcharm.Family;
 import com.romcharm.exceptions.NotFoundException;
 import com.romcharm.notification.NotificationService;
 import com.romcharm.notification.domain.EmailMessage;

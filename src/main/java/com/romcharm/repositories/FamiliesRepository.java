@@ -1,7 +1,7 @@
 package com.romcharm.repositories;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.romcharm.domain.Family;
+import com.romcharm.domain.romcharm.Family;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

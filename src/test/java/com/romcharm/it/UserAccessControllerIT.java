@@ -57,7 +57,7 @@ public class UserAccessControllerIT {
     public void whenUserNameDoesExistThenReturnToken() {
         String userName = "user";
         String password = "password";
-        String expectedToken = addAndRetireveUserToken(userName, password, Role.ROLE_CLIENT_APP);
+        String expectedToken = addAndRetireveUserToken(userName, password, Role.ROLE_ROMCHARM_APP);
 
         Login login = new Login(userName, password);
 
@@ -137,7 +137,7 @@ public class UserAccessControllerIT {
         String adminToken = addAndRetireveUserToken(usernameAdmin, usernameAdmin, Role.ROLE_ADMIN);
 
         String newUsername = "newUser";
-        User newUser = new User(newUsername, "newPass", Role.ROLE_CLIENT_APP.getName());
+        User newUser = new User(newUsername, "newPass", Role.ROLE_ROMCHARM_APP.getName());
 
         given()
                 .contentType(ContentType.JSON)
@@ -153,10 +153,10 @@ public class UserAccessControllerIT {
 
     @Test
     public void whenSavingUserNameWithClientAppRoleThenForbiddenResponseExpected() {
-        String clientToken = addAndRetireveUserToken("client", "client", Role.ROLE_CLIENT_APP);
+        String clientToken = addAndRetireveUserToken("client", "client", Role.ROLE_ROMCHARM_APP);
 
         String newUsername = "newUser";
-        User newUser = new User(newUsername, "newPass", Role.ROLE_CLIENT_APP.getName());
+        User newUser = new User(newUsername, "newPass", Role.ROLE_ROMCHARM_APP.getName());
 
         given()
                 .contentType(ContentType.JSON)
@@ -172,7 +172,7 @@ public class UserAccessControllerIT {
     public void whenSavingUserWithNoUsernameThenExpect400() {
         String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
 
-        User user = User.builder().password("password").role(Role.ROLE_CLIENT_APP.name()).build();
+        User user = User.builder().password("password").role(Role.ROLE_ROMCHARM_APP.name()).build();
 
         given()
                 .contentType(ContentType.JSON)
@@ -204,7 +204,7 @@ public class UserAccessControllerIT {
     public void whenSavingUserWithNoPasswordThenExpect400() {
         String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
 
-        User user = User.builder().username("someName").role(Role.ROLE_CLIENT_APP.getName()).build();
+        User user = User.builder().username("someName").role(Role.ROLE_ROMCHARM_APP.getName()).build();
 
         given()
                 .contentType(ContentType.JSON)
@@ -221,7 +221,7 @@ public class UserAccessControllerIT {
         String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
 
         String username = "repeatName";
-        User user = new User(username, "repeat", Role.ROLE_CLIENT_APP.getName());
+        User user = new User(username, "repeat", Role.ROLE_ROMCHARM_APP.getName());
 
         Mockito.when(dynamoDBMapper.load(User.class, username)).thenReturn(user);
 

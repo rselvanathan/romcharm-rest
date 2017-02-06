@@ -6,7 +6,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Header;
 import com.romcharm.authorization.JWTUtil;
 import com.romcharm.defaults.Role;
-import com.romcharm.domain.Family;
+import com.romcharm.domain.romcharm.Family;
 import com.romcharm.domain.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,11 +56,23 @@ public class FamiliesControllerIT {
         Mockito.when(dynamoDBMapper.load(Family.class, EMAIL)).thenReturn(null);
 
         given()
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
         .when()
             .get("/families/notFoundName")
         .then()
             .statusCode(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Test
+    public void whenTryingToGetFamilyWithNonRomCharmRoleExpectForbiddenAccess() {
+        Mockito.when(dynamoDBMapper.load(Family.class, EMAIL)).thenReturn(null);
+
+        given()
+            .header(new Header("Authorization", getToken(Role.ROLE_MYPAGE_APP)))
+        .when()
+            .get("/families/notFoundName")
+        .then()
+            .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -79,7 +91,7 @@ public class FamiliesControllerIT {
         Family result =
             given()
                 .contentType(ContentType.JSON)
-                .header(new Header("Authorization", getToken()))
+                .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .when()
                 .get(String.format("families/%s", foundName))
             .getBody()
@@ -104,7 +116,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -123,7 +135,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -143,7 +155,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -162,7 +174,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -182,7 +194,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -201,7 +213,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -221,7 +233,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -240,7 +252,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -259,7 +271,7 @@ public class FamiliesControllerIT {
 
         given()
             .contentType(ContentType.JSON)
-            .header(new Header("Authorization", getToken()))
+            .header(new Header("Authorization", getToken(Role.ROLE_ROMCHARM_APP)))
             .body(toSave)
         .when()
             .post("families/family")
@@ -267,8 +279,27 @@ public class FamiliesControllerIT {
             .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
-    private String getToken() {
-        User user = new User("user", "pass", Role.ROLE_CLIENT_APP.getName());
+    @Test
+    public void whenSavingFamilyANonRomCharmRoleExpectForbiddenAccess() {
+        Family toSave = Family.builder()
+                              .email(EMAIL)
+                              .firstName(FIRST_NAME)
+                              .lastName("")
+                              .areAttending(true)
+                              .build();
+
+        given()
+            .contentType(ContentType.JSON)
+            .header(new Header("Authorization", getToken(Role.ROLE_MYPAGE_APP)))
+            .body(toSave)
+        .when()
+            .post("families/family")
+        .then()
+            .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    private String getToken(Role role) {
+        User user = new User("user", "pass", role.getName());
         return jwtUtil.generateToken(user);
     }
 }

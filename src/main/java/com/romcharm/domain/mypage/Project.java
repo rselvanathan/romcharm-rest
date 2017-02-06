@@ -1,9 +1,9 @@
 package com.romcharm.domain.mypage;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.romcharm.defaults.ProjectButtonTypes;
+import com.romcharm.util.dynamoDBConverters.GalleryLinkListConverter;
+import com.romcharm.util.dynamoDBConverters.ProjectButtonTypeConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,6 +38,7 @@ public class Project {
     private String titleImageLink;
 
     @DynamoDBAttribute(attributeName = "buttonTypes")
+    @DynamoDBTypeConverted(converter = ProjectButtonTypeConverter.class)
     private List<ProjectButtonTypes> buttonTypes;
 
     @DynamoDBAttribute(attributeName = "githubLink")
@@ -47,6 +48,7 @@ public class Project {
     private String videoLink;
 
     @DynamoDBAttribute(attributeName = "galleryLinks")
+    @DynamoDBTypeConverted(converter = GalleryLinkListConverter.class)
     @Valid
     private List<GalleryLink> galleryLinks;
 }

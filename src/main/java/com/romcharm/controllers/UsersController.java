@@ -7,6 +7,9 @@ import com.romcharm.domain.Token;
 import com.romcharm.domain.User;
 import com.romcharm.exceptions.NotFoundException;
 import com.romcharm.repositories.UserRepository;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +33,10 @@ public class UsersController {
 
     @RequestMapping(value = {"/auth"}, method = RequestMethod.POST, produces = {"application/json"})
     @ResponseBody
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Success", response = Token.class),
+        @ApiResponse(code = 404, message = "User not found/Password incorrect"),
+    })
     public Token getUser(@RequestBody @Valid Login login) {
         User user = userRepository.findOne(login.getUsername());
         if(user == null) {
@@ -42,8 +49,13 @@ public class UsersController {
     }
 
 
+    @ApiOperation(value = "Add a user", notes = "An admin only endpoint to add a user")
     @RequestMapping(value = {"/add"}, method = RequestMethod.POST, consumes = {"application/json"})
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Created", response = User.class),
+        @ApiResponse(code = 400, message = "Bad Request - Invalid Data or User already exists"),
+    })
     public User saveUser(@RequestBody @Valid User userRole) {
         User user = userRepository.findOne(userRole.getUsername());
         if(user != null) {

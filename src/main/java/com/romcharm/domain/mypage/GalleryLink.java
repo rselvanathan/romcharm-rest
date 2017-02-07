@@ -1,5 +1,6 @@
 package com.romcharm.domain.mypage;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,6 @@ import javax.validation.constraints.NotNull;
 public class GalleryLink {
     @NotEmpty
     @NotNull
+    @ApiModelProperty(required = true, notes = "URL link for the picture")
     private String url;
 }

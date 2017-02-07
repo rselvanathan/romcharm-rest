@@ -20,7 +20,9 @@ public class CorsFilterConfig implements Filter {
 
     public CorsFilterConfig() {
         this.accessAllowOrigins = Stream.of("https://www.romandcharmi.com",
-                                            "https://romandcharmi.com")
+                                            "https://romandcharmi.com",
+                                            "https://romeshselvan.com",
+                                            "https://www.romeshselvan.com")
                                         .collect(Collectors.toList());
     }
 

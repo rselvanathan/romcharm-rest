@@ -61,6 +61,6 @@ public class Project {
     private List<GalleryLink> galleryLinks;
 
     @DynamoDBAttribute(attributeName = "order")
-    @ApiModelProperty(notes = "The order of the object. Order of projects will be based on this for the list retrieval")
+    @ApiModelProperty(notes = "Ordering of project when retrieved in the list.")
     private int order;
 }

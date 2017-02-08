@@ -43,7 +43,7 @@ public class ProjectsController {
     }
 
     @ApiOperation(value = "Add a project", notes = "An admin only endpoint to add a project. If order value is not set"
-                                                   + "or left as 0 then it will be added to the end of the list.")
+                                                   + " or left as 0 then it will be added to the end of the list.")
     @RequestMapping(value = "/add", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiResponses(value = {

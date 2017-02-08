@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity webSecurity) {
         // Ignore Security filters on these
-        webSecurity.ignoring().antMatchers("/users/auth")
+        webSecurity.ignoring().antMatchers("/users/auth", "/health")
                                 // Ignore Swagger related stuff
                               .antMatchers("/v2/api-docs",
                                       "/configuration/ui",

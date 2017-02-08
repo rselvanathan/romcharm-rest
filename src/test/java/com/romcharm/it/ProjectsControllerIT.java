@@ -19,6 +19,7 @@ import com.romcharm.repositories.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -41,12 +43,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(value = "classpath:config.properties")
-public class ProjectsRepositoryIT {
+public class ProjectsControllerIT {
 
     private static final String PROJECT_ID = "projectId";
 
     @Value("${local.server.port}")
     private int port;
+
+    @Mock
+    PaginatedScanList<Project> paginatedScanList;
 
     @MockBean
     private DynamoDBMapper dynamoDBMapper;
@@ -61,6 +66,7 @@ public class ProjectsRepositoryIT {
     public void setup() {
         RestAssured.port = port;
         RestAssured.defaultParser = Parser.JSON;
+        Mockito.when(dynamoDBMapper.scan(Mockito.eq(Project.class), Mockito.any(DynamoDBScanExpression.class))).thenReturn(paginatedScanList);
     }
 
     @Test
@@ -106,6 +112,8 @@ public class ProjectsRepositoryIT {
     @Test
     public void whenSavingProjectSaveToDynamoShouldBeCompleted() throws JsonProcessingException {
         Project expectedProject = getDefaultProject(PROJECT_ID);
+
+        Mockito.when(paginatedScanList.stream()).thenReturn(Stream.empty());
 
         Project result =
             given()
@@ -157,6 +165,8 @@ public class ProjectsRepositoryIT {
     public void whenSavingProjectWithEmptyGalleryLinkThenReturnCreatedHttpStatus() throws JsonProcessingException {
         Project expectedProject = getDefaultProjectWithGalleryLink(PROJECT_ID, Collections.emptyList());
 
+        Mockito.when(paginatedScanList.stream()).thenReturn(Stream.empty());
+
         given()
             .contentType(ContentType.JSON)
             .header(new Header("Authorization", getToken(Role.ROLE_ADMIN)))
@@ -172,6 +182,8 @@ public class ProjectsRepositoryIT {
     @Test
     public void whenSavingProjectWithNullGalleryLinkThenReturnCreatedHttpStatus() throws JsonProcessingException {
         Project expectedProject = getDefaultProjectWithGalleryLink(PROJECT_ID, null);
+
+        Mockito.when(paginatedScanList.stream()).thenReturn(Stream.empty());
 
         given()
             .contentType(ContentType.JSON)
@@ -238,9 +250,7 @@ public class ProjectsRepositoryIT {
     public void whenRetrieveingAListOfProjectsReturnTheCorrectList() throws JsonProcessingException {
         List<Project> projectList = getDefaultProjectList();
 
-        PaginatedScanList<Project> paginatedScanList = Mockito.mock(PaginatedScanList.class);
         Mockito.when(paginatedScanList.stream()).thenReturn(projectList.stream());
-        Mockito.when(dynamoDBMapper.scan(Mockito.eq(Project.class), Mockito.any(DynamoDBScanExpression.class))).thenReturn(paginatedScanList);
 
         String result =
             given()
@@ -282,7 +292,8 @@ public class ProjectsRepositoryIT {
                            Arrays.asList(ProjectButtonTypes.GALLERY, ProjectButtonTypes.GITHUB),
                            "github",
                            null,
-                           galleryLinks);
+                           galleryLinks,
+                           1);
     }
 
     private String getToken(Role role) {

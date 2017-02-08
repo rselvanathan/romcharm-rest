@@ -59,4 +59,8 @@ public class Project {
     @Valid
     @ApiModelProperty(notes = "A list of links for the pictures")
     private List<GalleryLink> galleryLinks;
+
+    @DynamoDBAttribute(attributeName = "order")
+    @ApiModelProperty(notes = "The order of the object. Order of projects will be based on this for the list retrieval")
+    private int order;
 }

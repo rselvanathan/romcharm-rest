@@ -17,6 +17,23 @@ https://api.romandcharmi.com/swagger-ui.html -
  
 ####Tech Used 
  - Spring Boot, Spring Security, AWS DynamoDB, AWS SNS, JWT Tokens, Docker
+ 
+####Docker Usage
+
+The REST Service is built and deployed as a docker image currently. To run the service simply use
+this command :
+
+```bash
+docker run -d --name romcharm-rest -p 8080:8080 \
+-e jwtSecret= \
+-e AWS_ACCESS_KEY_ID= \
+-e AWS_SECRET_ACCESS_KEY= \
+-e AWS_EMAIL_SNS_TOPIC= \
+-e APP_TYPE=ROMCHARM \
+-it rselvanathan/romcharm-rest:latest
+```
+
+The missing fields must be filled in by the user.
 
 ######Author:
 

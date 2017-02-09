@@ -43,7 +43,7 @@ public class Project {
 
     @DynamoDBAttribute(attributeName = "buttonTypes")
     @DynamoDBTypeConverted(converter = ProjectButtonTypeConverter.class)
-    @ApiModelProperty(notes = "List of project buttons displayed", allowableValues = "GITHUB, GALLERY, VIDEO")
+    @ApiModelProperty(notes = "List of project buttons displayed")
     private List<ProjectButtonTypes> buttonTypes;
 
     @DynamoDBAttribute(attributeName = "githubLink")
@@ -59,6 +59,10 @@ public class Project {
     @Valid
     @ApiModelProperty(notes = "A list of links for the pictures")
     private List<GalleryLink> galleryLinks;
+
+    @DynamoDBAttribute(attributeName = "directLink")
+    @ApiModelProperty(notes = "Direct Link to the project")
+    private String directLink;
 
     @DynamoDBAttribute(attributeName = "order")
     @ApiModelProperty(notes = "Ordering of project when retrieved in the list.")

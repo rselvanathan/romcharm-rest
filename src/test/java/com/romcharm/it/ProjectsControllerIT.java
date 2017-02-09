@@ -293,6 +293,7 @@ public class ProjectsControllerIT {
                            "github",
                            null,
                            galleryLinks,
+                           "directLink",
                            1);
     }
 

@@ -7,7 +7,7 @@ currently)
 
 ##### Swagger URL 
 https://api.romandcharmi.com/swagger-ui.html - 
-(For viewing only; cannot be used to play around API's)
+(For viewing only; cannot be used to play around with API's)
 
 ####Features
  - Integrated with AWS SNS to send notifications for automated mailing

@@ -3,10 +3,10 @@
 [![Build Status](https://travis-ci.org/rselvanathan/romcharm-rest.svg?branch=master)](https://travis-ci.org/rselvanathan/romcharm-rest)
 
 A Rest Service implemented using Spring Boot. This service powers a few of my private Projects (_my_page_ and _romcharm-app_ 
-currently). NOTE : This has now been replaced by a Play2/Scala app in production : https://github.com/rselvanathan/romesh-rest
+currently). **NOTE : This has now been replaced by a Play2/Scala app in production : https://github.com/rselvanathan/romesh-rest**
 
 ##### Swagger URL 
-https://api.romandcharmi.com/swagger-ui.html - 
+**(INACTIVE - Been Replaced)** https://api.romandcharmi.com/swagger-ui.html - 
 (For viewing only; cannot be used to play around with API's)
 
 ####Features

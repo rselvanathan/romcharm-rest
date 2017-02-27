@@ -2,7 +2,7 @@ package com.romcharm.controllers;
 
 import com.romcharm.domain.mypage.Project;
 import com.romcharm.exceptions.NotFoundException;
-import com.romcharm.repositories.ProjectsRepository;
+import com.romcharm.repositories.Repository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,13 +26,13 @@ public class ProjectsControllerTest {
 
     private static final String PROJECT_NAME = "projectName";
 
-    private static final Project EXPECTED_PROJECT = Project.builder().projectId(PROJECT_NAME).build();
+    private static final Project EXPECTED_PROJECT = new Project(PROJECT_NAME, null, null, null, null, null, null, null, 0);
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Mock
-    private ProjectsRepository projectsRepository;
+    private Repository<Project> projectsRepository;
 
     @InjectMocks
     private ProjectsController projectsController;
@@ -45,7 +45,7 @@ public class ProjectsControllerTest {
 
     @Test
     public void whenGettingAProjectAndExistsReturnIt() {
-        when(projectsRepository.getProject(PROJECT_NAME)).thenReturn(EXPECTED_PROJECT);
+        when(projectsRepository.findOne(PROJECT_NAME)).thenReturn(EXPECTED_PROJECT);
         Project result = projectsController.getProject(PROJECT_NAME);
         assertThat(result, is(EXPECTED_PROJECT));
     }
@@ -59,7 +59,8 @@ public class ProjectsControllerTest {
 
     @Test
     public void whenGettingAllProjectsExpectAListOfProjects() {
-        Project secondProject = Project.builder().projectId("anotherProject").build();
+        Project secondProject = new Project("anotherProject", null, null, null, null, null, null, null, 0);
+
         List<Project> projects = Arrays.asList(EXPECTED_PROJECT, secondProject);
         when(projectsRepository.getProjects()).thenReturn(projects);
         List<Project> result = projectsController.getProjects();

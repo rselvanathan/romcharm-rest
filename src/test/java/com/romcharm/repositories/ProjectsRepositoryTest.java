@@ -116,7 +116,7 @@ public class ProjectsRepositoryTest {
                                                                      getProject("projectTwo", 2),
                                                                      getProject("projectThree", 3)));
         String projectId = "projectTwo";
-        projectsRepository.save(getProject(projectId, 2));
+        projectsRepository.save( getProject(projectId, 2));
         verify(dynamoDBMapper).save(getProject(projectId, 2));
         verify(dynamoDBMapper, never()).save(getProject("projectThree", 4));
     }
@@ -189,6 +189,6 @@ public class ProjectsRepositoryTest {
     }
 
     private Project getProject(String projectId, int order) {
-        return Project.builder().projectId(projectId).order(order).build();
+        return new Project(projectId, null, null, null, null, null, null, null, order);
     }
 }

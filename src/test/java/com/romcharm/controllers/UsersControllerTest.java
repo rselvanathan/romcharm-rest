@@ -6,7 +6,7 @@ import com.romcharm.domain.Login;
 import com.romcharm.domain.Token;
 import com.romcharm.domain.User;
 import com.romcharm.exceptions.NotFoundException;
-import com.romcharm.repositories.UserRepository;
+import com.romcharm.repositories.Repository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -34,7 +34,7 @@ public class UsersControllerTest {
     private JWTUtil jwtUtilMock;
 
     @Mock
-    private UserRepository userRepositoryMock;
+    private Repository<User> userRepositoryMock;
 
     @InjectMocks
     private UsersController usersController;

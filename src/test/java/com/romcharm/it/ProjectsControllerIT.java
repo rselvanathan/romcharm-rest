@@ -15,7 +15,7 @@ import com.romcharm.defaults.Role;
 import com.romcharm.domain.User;
 import com.romcharm.domain.mypage.GalleryLink;
 import com.romcharm.domain.mypage.Project;
-import com.romcharm.repositories.UserRepository;
+import com.romcharm.repositories.Repository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +60,7 @@ public class ProjectsControllerIT {
     private JWTUtil jwtUtil;
 
     @Autowired
-    private UserRepository userRepository;
+    private Repository<Project> userRepository;
 
     @Before
     public void setup() {

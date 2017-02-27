@@ -9,7 +9,7 @@ import com.romcharm.defaults.Role;
 import com.romcharm.domain.Login;
 import com.romcharm.domain.Token;
 import com.romcharm.domain.User;
-import com.romcharm.repositories.UserRepository;
+import com.romcharm.repositories.Repository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +44,7 @@ public class UserAccessControllerIT {
     private JWTUtil jwtUtil;
 
     @Autowired
-    private UserRepository userRepository;
+    private Repository<User> userRepository;
     private String username;
     private String password;
 
@@ -172,7 +172,7 @@ public class UserAccessControllerIT {
     public void whenSavingUserWithNoUsernameThenExpect400() {
         String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
 
-        User user = User.builder().password("password").role(Role.ROLE_ROMCHARM_APP.name()).build();
+        User user = new User(null, "password", Role.ROLE_ROMCHARM_APP.name());
 
         given()
                 .contentType(ContentType.JSON)
@@ -188,7 +188,7 @@ public class UserAccessControllerIT {
     public void whenSavingUserWithNoRoleThenExpect400() {
         String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
 
-        User user = User.builder().username("someName").password("password").build();
+        User user = new User("someName", "password", null);
 
         given()
                 .contentType(ContentType.JSON)
@@ -204,7 +204,7 @@ public class UserAccessControllerIT {
     public void whenSavingUserWithNoPasswordThenExpect400() {
         String adminToken = addAndRetireveUserToken("admin", "admin", Role.ROLE_ADMIN);
 
-        User user = User.builder().username("someName").role(Role.ROLE_ROMCHARM_APP.getName()).build();
+        User user = new User("someName", null, Role.ROLE_ROMCHARM_APP.getName());
 
         given()
                 .contentType(ContentType.JSON)

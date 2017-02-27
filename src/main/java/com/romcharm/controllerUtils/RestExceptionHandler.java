@@ -15,13 +15,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {NotFoundException.class})
     public ResponseEntity<Object> handleNotFoundException(RuntimeException e, WebRequest request) {
-        Error error = Error.builder().error("The resource was not found").build();
+        Error error = new Error("The resource was not found");
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler(value = {IllegalArgumentException.class})
     public ResponseEntity<Object> handleIllegalArgumentException(RuntimeException e, WebRequest request) {
-        Error error = Error.builder().error("The arguments were incorrect : " + e.getMessage()).build();
+        Error error = new Error("The arguments were incorrect : " + e.getMessage());
         return handleExceptionInternal(e, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 }

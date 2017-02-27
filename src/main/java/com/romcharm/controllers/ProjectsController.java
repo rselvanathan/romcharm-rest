@@ -3,7 +3,7 @@ package com.romcharm.controllers;
 import com.romcharm.defaults.APIErrorCode;
 import com.romcharm.domain.mypage.Project;
 import com.romcharm.exceptions.NotFoundException;
-import com.romcharm.repositories.ProjectsRepository;
+import com.romcharm.repositories.Repository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -21,10 +21,10 @@ import java.util.List;
 @RequestMapping("/projects")
 public class ProjectsController {
 
-    private final ProjectsRepository projectsRepository;
+    private final Repository<Project> projectsRepository;
 
     @Autowired
-    public ProjectsController(ProjectsRepository repository) {
+    public ProjectsController(Repository<Project> repository) {
         projectsRepository = repository;
     }
 
@@ -35,7 +35,7 @@ public class ProjectsController {
         @ApiResponse(code = 404, message = "Project not found"),
     })
     public Project getProject(@PathVariable(value = "projectId") String projectId) {
-        Project project = projectsRepository.getProject(projectId);
+        Project project = projectsRepository.findOne(projectId);
         if(project == null) {
             throw new NotFoundException(APIErrorCode.PROJECT_NOT_FOUND);
         }

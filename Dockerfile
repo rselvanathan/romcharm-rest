@@ -1,4 +1,4 @@
-FROM develar/java
+FROM java:openjdk-8-jre
 VOLUME /tmp
 ADD target/romcharm-rest-1.0.0-SNAPSHOT.jar app.jar
 EXPOSE 8080

@@ -47,8 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/users/add", "/projects/add").hasRole("ADMIN")
-                .antMatchers("/families/**").hasRole("ROMCHARM_APP")
-                .antMatchers("/projects", "/projects/**").hasRole("MYPAGE_APP")
+                .antMatchers("/families/**").hasAnyRole("ROMCHARM_APP", "ADMIN")
+                .antMatchers("/projects", "/projects/**").hasAnyRole("MYPAGE_APP", "ADMIN")
                 .anyRequest().authenticated()
             .and().csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

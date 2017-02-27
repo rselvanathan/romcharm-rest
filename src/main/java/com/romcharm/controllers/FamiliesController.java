@@ -1,12 +1,10 @@
 package com.romcharm.controllers;
 
-import com.amazonaws.services.sns.model.PublishResult;
 import com.romcharm.defaults.APIErrorCode;
 import com.romcharm.domain.romcharm.Family;
 import com.romcharm.exceptions.NotFoundException;
 import com.romcharm.notification.NotificationService;
-import com.romcharm.notification.domain.EmailMessage;
-import com.romcharm.repositories.FamiliesRepository;
+import com.romcharm.repositories.Repository;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
@@ -16,18 +14,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/families")
 public class FamiliesController {
     private Logger logger = LoggerFactory.getLogger(FamiliesController.class);
 
-    private final FamiliesRepository familiesRepository;
+    private final Repository<Family> familiesRepository;
     private final NotificationService notificationService;
 
     @Autowired
-    public FamiliesController(FamiliesRepository repository, NotificationService service) {
+    public FamiliesController(Repository<Family> repository, NotificationService service) {
         familiesRepository = repository;
         notificationService = service;
     }
@@ -55,20 +52,10 @@ public class FamiliesController {
         Family familyResult = familiesRepository.findOne(family.getEmail());
         if(familyResult == null) {
             Family savedFamily = familiesRepository.save(family);
-            EmailMessage message = getEmailMessage(savedFamily);
-            // Blocking call currently
-            CompletableFuture<PublishResult> future = notificationService.sendEmailNotification(message);
-            future.exceptionally(th -> {
-                logger.error("An error occured when trying to send an E-mail Notification", th);
-                return null;
-            }).join();
+            notificationService.sendEmailNotification(savedFamily);
             return savedFamily;
         } else {
             throw new IllegalArgumentException(APIErrorCode.FAMILY_EXISTS.getReason());
         }
-    }
-
-    private EmailMessage getEmailMessage(Family family) {
-        return new EmailMessage(family.getEmail(), family.getFirstName(), family.getLastName(), family.getAreAttending(), family.getNumberAttending());
     }
 }

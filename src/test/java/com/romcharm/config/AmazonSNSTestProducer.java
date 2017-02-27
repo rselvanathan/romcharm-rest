@@ -1,6 +1,6 @@
 package com.romcharm.config;
 
-import com.amazonaws.services.sns.AmazonSNSAsyncClient;
+import com.amazonaws.services.sns.AmazonSNSClient;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ public class AmazonSNSTestProducer {
 
     @Bean
     @Primary
-    public AmazonSNSAsyncClient amazonSNSAsyncClientMock() {
-        return Mockito.mock(AmazonSNSAsyncClient.class);
+    public AmazonSNSClient amazonSNSClientMock() {
+        return Mockito.mock(AmazonSNSClient.class);
     }
 }

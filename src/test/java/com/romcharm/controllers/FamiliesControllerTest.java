@@ -4,8 +4,7 @@ import com.amazonaws.services.sns.model.PublishResult;
 import com.romcharm.domain.romcharm.Family;
 import com.romcharm.exceptions.NotFoundException;
 import com.romcharm.notification.NotificationService;
-import com.romcharm.notification.domain.EmailMessage;
-import com.romcharm.repositories.FamiliesRepository;
+import com.romcharm.repositories.Repository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,7 +29,7 @@ public class FamiliesControllerTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
-    private FamiliesRepository familiesRepositoryMock;
+    private Repository<Family> familiesRepositoryMock;
 
     @Mock
     private NotificationService notificationServiceMock;
@@ -63,12 +62,11 @@ public class FamiliesControllerTest {
         when(familiesRepositoryMock.findOne(email)).thenReturn(null);
 
         Family family = new Family(email, "firstName", "lastName", true, 2);
-        EmailMessage emailMessage = new EmailMessage(email, "firstName", "lastName", true, 2);
+        Family emailMessage = new Family(email, "firstName", "lastName", true, 2);
         CompletableFuture<PublishResult> completableFuture = new CompletableFuture<>();
         completableFuture.complete(Mockito.mock(PublishResult.class));
 
         when(familiesRepositoryMock.save(family)).thenReturn(family);
-        when(notificationServiceMock.sendEmailNotification(emailMessage)).thenReturn(completableFuture);
 
         familiesController.saveFamily(family);
 
@@ -81,12 +79,11 @@ public class FamiliesControllerTest {
         when(familiesRepositoryMock.findOne(email)).thenReturn(null);
 
         Family family = new Family(email, "firstName", "lastName", true, 2);
-        EmailMessage emailMessage = new EmailMessage(email, "firstName", "lastName", true, 2);
+        Family emailMessage = new Family(email, "firstName", "lastName", true, 2);
         CompletableFuture<PublishResult> completableFuture = new CompletableFuture<>();
         completableFuture.completeExceptionally(new RuntimeException("Fake Error"));
 
         when(familiesRepositoryMock.save(family)).thenReturn(family);
-        when(notificationServiceMock.sendEmailNotification(emailMessage)).thenReturn(completableFuture);
 
         Family result = familiesController.saveFamily(family);
 
@@ -100,7 +97,7 @@ public class FamiliesControllerTest {
     public void whenAddingFamilyAndFamilyIsFoundThenExpectIllegalArgumentException() {
         expectedException.expect(IllegalArgumentException.class);
 
-        Family family = Family.builder().email(email).build();
+        Family family = new Family(email, null, null, false, 0);
         when(familiesRepositoryMock.findOne(email)).thenReturn(family);
 
         familiesController.saveFamily(family);

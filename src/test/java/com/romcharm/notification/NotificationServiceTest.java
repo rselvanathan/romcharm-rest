@@ -1,12 +1,11 @@
 package com.romcharm.notification;
 
-import com.amazonaws.handlers.AsyncHandler;
-import com.amazonaws.services.sns.AmazonSNSAsyncClient;
+import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.romcharm.notification.domain.EmailMessage;
+import com.romcharm.domain.romcharm.Family;
 import com.romcharm.util.JSONMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,7 +33,7 @@ public class NotificationServiceTest {
     private JSONMapper jsonMapperMock;
 
     @Mock
-    private AmazonSNSAsyncClient amazonSNSAsyncClientMock;
+    private AmazonSNSClient amazonSNSClientMock;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -48,7 +46,7 @@ public class NotificationServiceTest {
 
     @Test
     public void whenSendingAnEmailNotificationSendANotificationToAmazonClientWithExpectedEmailString() throws JsonProcessingException {
-        EmailMessage message = new EmailMessage("email", "firstname", "lastname", true, 5);
+        Family message = new Family("email", "firstname", "lastname", true, 5);
         String expected = objectMapper.writeValueAsString(message);
 
         PublishRequest request = new PublishRequest(SNS_TOPIC, expected);
@@ -59,6 +57,6 @@ public class NotificationServiceTest {
         when(jsonMapperMock.getJSONStringFromObject(message)).thenReturn(expected);
         notificationService.sendEmailNotification(message);
 
-        verify(amazonSNSAsyncClientMock).publishAsync(eq(request), any(AsyncHandler.class));
+        verify(amazonSNSClientMock).publish(eq(request));
     }
 }

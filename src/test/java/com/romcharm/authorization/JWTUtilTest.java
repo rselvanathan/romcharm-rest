@@ -25,23 +25,20 @@ public class JWTUtilTest {
 
     @Test
     public void generateTokenShouldGenerateANonEmptyToken() {
-        User build = User.builder().username(USERNAME).role(ROLE).build();
-        String result = jwtUtil.generateToken(build);
+        String result = jwtUtil.generateToken(defaultUser());
         assertThat(result, is(not(nullValue())));
     }
 
     @Test
     public void whenRetrievingTokenCorrectRoleShouldBeReturned() {
-        User build = User.builder().username(USERNAME).role(ROLE).build();
-        String token = jwtUtil.generateToken(build);
+        String token = jwtUtil.generateToken(defaultUser());
         Optional<String> tokenRole = jwtUtil.getTokenRole(token);
         assertThat(tokenRole.get(), is(ROLE));
     }
 
     @Test
     public void whenRetrievingTokenCorrectUsernameShouldBeReturned() {
-        User build = User.builder().username(USERNAME).role(ROLE).build();
-        String token = jwtUtil.generateToken(build);
+        String token = jwtUtil.generateToken(defaultUser());
         Optional<String> tokenUsername = jwtUtil.getTokenUsername(token);
         assertThat(tokenUsername.get(), is(USERNAME));
     }
@@ -58,5 +55,9 @@ public class JWTUtilTest {
         String badToken = "bad";
         Optional<String> tokenUsername = jwtUtil.getTokenRole(badToken);
         assertThat(tokenUsername, is(Optional.empty()));
+    }
+
+    private User defaultUser() {
+        return new User(USERNAME, null, ROLE);
     }
 }

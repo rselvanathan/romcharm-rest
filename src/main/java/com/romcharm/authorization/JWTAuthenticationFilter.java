@@ -1,8 +1,6 @@
 package com.romcharm.authorization;
 
 import com.romcharm.domain.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,9 +16,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-
-    private static final Logger log = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
-
     private final JWTUtil jwtUtil;
 
     public JWTAuthenticationFilter(JWTUtil jwtUtil) {
@@ -31,15 +26,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("authorization");
         Optional<String> tokenUsername = jwtUtil.getTokenUsername(token);
-        if(!tokenUsername.isPresent()) {
-            log.debug("Invalid Token");
-        } else {
+        if(tokenUsername.isPresent()) {
             Optional<String> tokenRole = jwtUtil.getTokenRole(token);
-            User user = User.builder().username(tokenUsername.get()).role(tokenRole.get()).build();
+            User user = new User(tokenUsername.get(), "", tokenRole.get());
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(user, null, Collections.singletonList(new SimpleGrantedAuthority(user.getRole())));
+                new UsernamePasswordAuthenticationToken(user, null, Collections.singletonList(new SimpleGrantedAuthority(user.getRole())));
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            log.debug(String.format("User %s has been authenticated with the role %s", user.getUsername(), user.getRole()));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
         filterChain.doFilter(request, response);

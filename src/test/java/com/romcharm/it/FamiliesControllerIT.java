@@ -78,13 +78,7 @@ public class FamiliesControllerIT {
     @Test
     public void whenFamilyDoesExistThenReturnObject() {
         String foundName = "foundName";
-        Family expectedFamily = Family.builder()
-                                      .email(foundName)
-                                      .firstName(FIRST_NAME)
-                                      .lastName(LAST_NAME)
-                                      .areAttending(true)
-                                      .numberAttending(5)
-                                      .build();
+        Family expectedFamily = new Family(foundName, FIRST_NAME, LAST_NAME, true, 5);
 
         Mockito.when(dynamoDBMapper.load(Family.class, foundName)).thenReturn(expectedFamily);
 
@@ -103,16 +97,11 @@ public class FamiliesControllerIT {
     @Test
     public void whenTryingOverwriteFamilyReturn400Error() {
         String email = "toBeSaved";
-        Family initialFamily = Family.builder()
-                                     .email(email)
-                                     .build();
+        Family initialFamily = new Family(email, null, null, false, 0);
 
         Mockito.when(dynamoDBMapper.load(Family.class, initialFamily)).thenReturn(initialFamily);
 
-        Family toSave = Family.builder()
-                              .email(email)
-                              .firstName(FIRST_NAME)
-                              .build();
+        Family toSave = new Family(email, FIRST_NAME, null, false, 0);
 
         given()
             .contentType(ContentType.JSON)
@@ -126,12 +115,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithFamilyNameNullShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .firstName(FIRST_NAME)
-                              .lastName(LAST_NAME)
-                              .areAttending(true)
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family(null, FIRST_NAME, LAST_NAME, true, 4);
 
         given()
             .contentType(ContentType.JSON)
@@ -145,13 +129,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithFamilyNameIsEmptyShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email("")
-                              .firstName(FIRST_NAME)
-                              .lastName(LAST_NAME)
-                              .areAttending(true)
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family("", FIRST_NAME, LAST_NAME, false, 0);
 
         given()
             .contentType(ContentType.JSON)
@@ -165,12 +143,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithFirstNameIsNullShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .lastName(LAST_NAME)
-                              .areAttending(true)
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family(EMAIL, null, LAST_NAME, false, 4);
 
         given()
             .contentType(ContentType.JSON)
@@ -184,13 +157,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithFirstNameIsEmptyShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName("")
-                              .lastName(LAST_NAME)
-                              .areAttending(true)
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family(EMAIL, "", LAST_NAME, false, 4);
 
         given()
             .contentType(ContentType.JSON)
@@ -204,12 +171,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithLastNameIsNullShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName(FIRST_NAME)
-                              .areAttending(true)
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family(EMAIL, FIRST_NAME, null, false, 4);
 
         given()
             .contentType(ContentType.JSON)
@@ -223,13 +185,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithLastNameIsEmptyShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName(FIRST_NAME)
-                              .lastName("")
-                              .areAttending(true)
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family(EMAIL, FIRST_NAME, "", false, 4);
 
         given()
             .contentType(ContentType.JSON)
@@ -243,12 +199,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithIsAttendingFieldIsNullShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName(FIRST_NAME)
-                              .lastName("")
-                              .numberAttending(4)
-                              .build();
+        Family toSave = new Family(EMAIL, FIRST_NAME, LAST_NAME, null, 4);
 
         given()
             .contentType(ContentType.JSON)
@@ -262,12 +213,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyWithIsNumberOfPeopleAttendingFieldIsNullShouldReturn400Status() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName(FIRST_NAME)
-                              .lastName("")
-                              .areAttending(true)
-                              .build();
+        Family toSave = new Family(EMAIL, FIRST_NAME, LAST_NAME, true, null);
 
         given()
             .contentType(ContentType.JSON)
@@ -281,12 +227,7 @@ public class FamiliesControllerIT {
 
     @Test
     public void whenSavingFamilyANonRomCharmRoleExpectForbiddenAccess() {
-        Family toSave = Family.builder()
-                              .email(EMAIL)
-                              .firstName(FIRST_NAME)
-                              .lastName("")
-                              .areAttending(true)
-                              .build();
+        Family toSave = new Family(EMAIL, FIRST_NAME, LAST_NAME, false, 4);
 
         given()
             .contentType(ContentType.JSON)

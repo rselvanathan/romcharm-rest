@@ -6,7 +6,7 @@ import com.romcharm.domain.Login;
 import com.romcharm.domain.Token;
 import com.romcharm.domain.User;
 import com.romcharm.exceptions.NotFoundException;
-import com.romcharm.repositories.UserRepository;
+import com.romcharm.repositories.Repository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -22,11 +22,12 @@ import static com.romcharm.defaults.APIErrorCode.USER_EXISTS;
 @RestController
 @RequestMapping("/users")
 public class UsersController {
-    private final UserRepository userRepository;
+
+    private final Repository<User> userRepository;
     private final JWTUtil jwtUtil;
 
     @Autowired
-    public UsersController(UserRepository userRepository, JWTUtil jwtUtil) {
+    public UsersController(Repository<User> userRepository, JWTUtil jwtUtil) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
     }
@@ -45,7 +46,7 @@ public class UsersController {
         if(!user.getPassword().equals(login.getPassword())) {
             throw new NotFoundException(PASSWORD_INCORRECT);
         }
-        return Token.builder().token(jwtUtil.generateToken(user)).build();
+        return new Token(jwtUtil.generateToken(user));
     }
 
 
